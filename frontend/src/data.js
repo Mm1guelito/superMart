@@ -1,0 +1,53 @@
+const data = {
+  products: [
+    {
+      name: "H&M Slim shirt",
+      slug: "H&M-slim-shirt",
+      category: "Shirts",
+      image: "/images/p1.jpg", // 679px × 829px
+      price: 120,
+      countInStock: 10,
+      brand: "H&M",
+      rating: 4.5,
+      numReviews: 10,
+      description: "high quality shirt",
+    },
+    {
+      name: "Uniqlo Fit Shirt",
+      slug: "Uniqlo-fit-shirt",
+      category: "Shirts",
+      image: "/images/p2.jpg",
+      price: 250,
+      countInStock: 20,
+      brand: "Uniqlo",
+      rating: 4.0,
+      numReviews: 10,
+      description: "high quality product",
+    },
+    {
+      name: "H&M Slim Pant",
+      slug: "H&M-slim-pant",
+      category: "Pants",
+      image: "/images/p3.jpg",
+      price: 25,
+      countInStock: 15,
+      brand: "H&M",
+      rating: 4.5,
+      numReviews: 14,
+      description: "high quality product",
+    },
+    {
+      name: "Uniqlo Fit Pant",
+      slug: "Uniqlo-fit-pant",
+      category: "Pants",
+      image: "/images/p4.jpg",
+      price: 65,
+      countInStock: 5,
+      brand: "Uniqlo",
+      rating: 4.5,
+      numReviews: 10,
+      description: "high quality product",
+    },
+  ],
+};
+export default data;
