@@ -1,4 +1,3 @@
-import Axios from "axios";
 import React, { useContext, useEffect, useReducer } from "react";
 import { Helmet } from "react-helmet-async";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,11 +6,12 @@ import Col from "react-bootstrap/Col";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { toast } from "react-toastify";
-import { getError } from "../utils";
 import ListGroup from "react-bootstrap/ListGroup";
 import { Store } from "../Store";
 import CheckoutSteps from "../components/CheckoutSteps";
 import LoadingBox from "../components/LoadingBox";
+import axios from "axios";
+import { getError } from "../utils";
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -25,6 +25,10 @@ const reducer = (state, action) => {
       return state;
   }
 };
+
+const api = axios.create({
+  baseURL: "https://supermart-migs.onrender.com",
+});
 
 export default function PlaceOrderScreen() {
   const navigate = useNavigate();
@@ -48,7 +52,7 @@ export default function PlaceOrderScreen() {
     try {
       dispatch({ type: "CREATE_REQUEST" });
 
-      const { data } = await Axios.post(
+      const { data } = await api.post(
         "/api/orders",
         {
           orderItems: cart.cartItems,
@@ -166,7 +170,7 @@ export default function PlaceOrderScreen() {
                 <ListGroup.Item>
                   <Row>
                     <Col>
-                      <strong> Order Total</strong>
+                      <strong>Order Total</strong>
                     </Col>
                     <Col>
                       <strong>${cart.totalPrice.toFixed(2)}</strong>

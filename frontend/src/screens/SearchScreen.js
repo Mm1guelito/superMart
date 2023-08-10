@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import axios from "axios";
+import Axios from "axios"; // Import Axios
 import { toast } from "react-toastify";
 import { getError } from "../utils";
 import { Helmet } from "react-helmet-async";
@@ -71,6 +71,11 @@ const ratings = [
   },
 ];
 
+// Define the Axios instance
+const api = Axios.create({
+  baseURL: "https://supermart-migs.onrender.com",
+});
+
 export default function SearchScreen() {
   const navigate = useNavigate();
   const { search } = useLocation();
@@ -91,32 +96,32 @@ export default function SearchScreen() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const { data } = await axios.get(
+        const { data } = await api.get(
           `/api/products/search?page=${page}&query=${query}&category=${category}&price=${price}&rating=${rating}&order=${order}`
         );
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (err) {
         dispatch({
           type: "FETCH_FAIL",
-          payload: getError(error),
+          payload: getError(err),
         });
       }
     };
     fetchData();
-  }, [category, error, order, page, price, query, rating]);
+  }, [category, order, page, price, query, rating]);
 
   const [categories, setCategories] = useState([]);
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get(`/api/products/categories`);
+        const { data } = await api.get(`/api/products/categories`);
         setCategories(data);
       } catch (err) {
         toast.error(getError(err));
       }
     };
     fetchCategories();
-  }, [dispatch]);
+  }, []);
 
   const getFilterUrl = (filter) => {
     const filterPage = filter.page || page;
@@ -125,7 +130,7 @@ export default function SearchScreen() {
     const filterRating = filter.rating || rating;
     const filterPrice = filter.price || price;
     const sortOrder = filter.order || order;
-    return `/search/category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
+    return `/search?category=${filterCategory}&query=${filterQuery}&price=${filterPrice}&rating=${filterRating}&order=${sortOrder}&page=${filterPage}`;
   };
   return (
     <div>

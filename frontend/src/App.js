@@ -1,3 +1,4 @@
+import React, { useContext, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -9,7 +10,6 @@ import Nav from "react-bootstrap/Nav";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import Container from "react-bootstrap/Container";
 import { LinkContainer } from "react-router-bootstrap";
-import { useContext, useEffect, useState } from "react";
 import { Store } from "./Store";
 import CartScreen from "./screens/CartScreen";
 import SigninScreen from "./screens/SigninScreen";
@@ -26,6 +26,11 @@ import axios from "axios";
 import SearchBox from "./components/SearchBox";
 import SearchScreen from "./screens/SearchScreen";
 
+// Create an Axios instance with a specific base URL
+const api = axios.create({
+  baseURL: "https://supermart-migs.onrender.com",
+});
+
 function App() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { cart, userInfo } = state;
@@ -37,13 +42,14 @@ function App() {
     localStorage.removeItem("paymentMethod");
     window.location.href = "/signin";
   };
+
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false);
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get(`/api/products/categories`);
+        const { data } = await api.get(`/api/products/categories`);
         setCategories(data);
       } catch (err) {
         toast.error(getError(err));
@@ -51,6 +57,7 @@ function App() {
     };
     fetchCategories();
   }, []);
+
   return (
     <BrowserRouter>
       <div
@@ -167,4 +174,5 @@ function App() {
     </BrowserRouter>
   );
 }
+
 export default App;

@@ -1,18 +1,17 @@
-import axios from "axios";
 import React, { useContext, useEffect, useReducer } from "react";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import { Helmet } from "react-helmet-async";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, Link } from "react-router-dom";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ListGroup from "react-bootstrap/ListGroup";
 import Card from "react-bootstrap/Card";
-import { Link } from "react-router-dom";
 import LoadingBox from "../components/LoadingBox";
 import MessageBox from "../components/MessageBox";
 import { Store } from "../Store";
 import { getError } from "../utils";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 function reducer(state, action) {
   switch (action.type) {
@@ -30,11 +29,15 @@ function reducer(state, action) {
       return { ...state, loadingPay: false };
     case "PAY_RESET":
       return { ...state, loadingPay: false, successPay: false };
-
     default:
       return state;
   }
 }
+
+const api = axios.create({
+  baseURL: "https://supermart-migs.onrender.com",
+});
+
 export default function OrderScreen() {
   const { state } = useContext(Store);
   const { userInfo } = state;
@@ -72,7 +75,7 @@ export default function OrderScreen() {
     return actions.order.capture().then(async function (details) {
       try {
         dispatch({ type: "PAY_REQUEST" });
-        const { data } = await axios.put(
+        const { data } = await api.put(
           `/api/orders/${order._id}/pay`,
           details,
           {
@@ -87,6 +90,7 @@ export default function OrderScreen() {
       }
     });
   }
+
   function onError(err) {
     toast.error(getError(err));
   }
@@ -95,7 +99,7 @@ export default function OrderScreen() {
     const fetchOrder = async () => {
       try {
         dispatch({ type: "FETCH_REQUEST" });
-        const { data } = await axios.get(`/api/orders/${orderId}`, {
+        const { data } = await api.get(`/api/orders/${orderId}`, {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
         dispatch({ type: "FETCH_SUCCESS", payload: data });
@@ -114,7 +118,7 @@ export default function OrderScreen() {
       }
     } else {
       const loadPaypalScript = async () => {
-        const { data: clientId } = await axios.get("/api/keys/paypal", {
+        const { data: clientId } = await api.get("/api/keys/paypal", {
           headers: { authorization: `Bearer ${userInfo.token}` },
         });
         paypalDispatch({
@@ -129,8 +133,9 @@ export default function OrderScreen() {
       loadPaypalScript();
     }
   }, [order, userInfo, orderId, navigate, paypalDispatch, successPay]);
+
   return loading ? (
-    <LoadingBox></LoadingBox>
+    <LoadingBox />
   ) : error ? (
     <MessageBox variant="danger">{error}</MessageBox>
   ) : (
@@ -187,7 +192,7 @@ export default function OrderScreen() {
                           src={item.image}
                           alt={item.name}
                           className="img-fluid rounded img-thumbnail"
-                        ></img>{" "}
+                        />
                         <Link to={`/product/${item.slug}`}>{item.name}</Link>
                       </Col>
                       <Col md={3}>
@@ -227,7 +232,7 @@ export default function OrderScreen() {
                 <ListGroup.Item>
                   <Row>
                     <Col>
-                      <strong> Order Total</strong>
+                      <strong>Order Total</strong>
                     </Col>
                     <Col>
                       <strong>${order.totalPrice.toFixed(2)}</strong>
@@ -244,10 +249,10 @@ export default function OrderScreen() {
                           createOrder={createOrder}
                           onApprove={onApprove}
                           onError={onError}
-                        ></PayPalButtons>
+                        />
                       </div>
                     )}
-                    {loadingPay && <LoadingBox></LoadingBox>}
+                    {loadingPay && <LoadingBox />}
                   </ListGroup.Item>
                 )}
               </ListGroup>

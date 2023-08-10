@@ -8,6 +8,11 @@ import { Store } from "../Store";
 import { getError } from "../utils";
 import Button from "react-bootstrap/esm/Button";
 
+// Create an Axios instance with a specific base URL
+const api = axios.create({
+  baseURL: "https://supermart-migs.onrender.com",
+});
+
 const reducer = (state, action) => {
   switch (action.type) {
     case "FETCH_REQUEST":
@@ -30,15 +35,15 @@ export default function OrderHistoryScreen() {
     loading: true,
     error: "",
   });
+
   useEffect(() => {
     const fetchData = async () => {
       dispatch({ type: "FETCH_REQUEST" });
       try {
-        const { data } = await axios.get(
-          `/api/orders/mine`,
-
-          { headers: { Authorization: `Bearer ${userInfo.token}` } }
-        );
+        // Use the api instance to make the API request
+        const { data } = await api.get("/api/orders/mine", {
+          headers: { Authorization: `Bearer ${userInfo.token}` },
+        });
         dispatch({ type: "FETCH_SUCCESS", payload: data });
       } catch (error) {
         dispatch({
@@ -49,6 +54,7 @@ export default function OrderHistoryScreen() {
     };
     fetchData();
   }, [userInfo]);
+
   return (
     <div>
       <Helmet>

@@ -1,10 +1,10 @@
+import React, { useState, useContext, useEffect } from "react";
 import Axios from "axios";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Container from "react-bootstrap/Container";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import { Helmet } from "react-helmet-async";
-import { useContext, useEffect, useState } from "react";
 import { Store } from "../Store";
 import { toast } from "react-toastify";
 import { getError } from "../utils";
@@ -22,6 +22,11 @@ export default function SignupScreen() {
 
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
+
+  const api = Axios.create({
+    baseURL: "https://supermart-migs.onrender.com",
+  });
+
   const submitHandler = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
@@ -29,7 +34,7 @@ export default function SignupScreen() {
       return;
     }
     try {
-      const { data } = await Axios.post("/api/users/signup", {
+      const { data } = await api.post("/api/users/signup", {
         name,
         email,
         password,
@@ -75,14 +80,14 @@ export default function SignupScreen() {
             required
             onChange={(e) => setPassword(e.target.value)}
           />
-          <Form.Group className="mb-3" controlId="confirmPassword">
-            <Form.Label>Confirm Password</Form.Label>
-            <Form.Control
-              type="password"
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-          </Form.Group>
+        </Form.Group>
+        <Form.Group className="mb-3" controlId="confirmPassword">
+          <Form.Label>Confirm Password</Form.Label>
+          <Form.Control
+            type="password"
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
         </Form.Group>
         <div className="mb-3">
           <Button type="submit">Sign Up</Button>

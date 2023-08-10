@@ -21,6 +21,10 @@ const reducer = (state, action) => {
   }
 };
 
+const api = axios.create({
+  baseURL: "https://supermart-migs.onrender.com",
+});
+
 export default function ProfileScreen() {
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const { userInfo } = state;
@@ -36,7 +40,7 @@ export default function ProfileScreen() {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.put(
+      const { data } = await api.put(
         "/api/users/profile",
         {
           name,
@@ -55,7 +59,7 @@ export default function ProfileScreen() {
       toast.success("User updated successfully");
     } catch (err) {
       dispatch({
-        type: "FETCH_FAIL",
+        type: "UPDATE_FAIL",
       });
       toast.error(getError(err));
     }
@@ -76,7 +80,7 @@ export default function ProfileScreen() {
             required
           />
         </Form.Group>
-        <Form.Group className="mb-3" controlId="name">
+        <Form.Group className="mb-3" controlId="email">
           <Form.Label>Email</Form.Label>
           <Form.Control
             type="email"
@@ -92,7 +96,7 @@ export default function ProfileScreen() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </Form.Group>
-        <Form.Group className="mb-3" controlId="password">
+        <Form.Group className="mb-3" controlId="confirmPassword">
           <Form.Label>Confirm Password</Form.Label>
           <Form.Control
             type="password"

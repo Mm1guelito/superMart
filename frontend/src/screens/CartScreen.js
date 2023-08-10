@@ -10,6 +10,11 @@ import Card from "react-bootstrap/Card";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
+// Create an Axios instance with a specific base URL
+const api = axios.create({
+  baseURL: "https://supermart-migs.onrender.com",
+});
+
 export default function CartScreen() {
   const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
@@ -18,7 +23,7 @@ export default function CartScreen() {
   } = state;
 
   const updateCartHandler = async (item, quantity) => {
-    const { data } = await axios.get(`/api/products/${item._id}`);
+    const { data } = await api.get(`/api/products/${item._id}`);
     if (data.countInStock < quantity) {
       window.alert("Sorry. Product is out of stock");
       return;
@@ -28,6 +33,7 @@ export default function CartScreen() {
       payload: { ...item, quantity },
     });
   };
+
   const removeItemHandler = (item) => {
     ctxDispatch({ type: "CART_REMOVE_ITEM", payload: item });
   };

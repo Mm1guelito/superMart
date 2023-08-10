@@ -1,10 +1,15 @@
+import React, { useContext } from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import { Link } from "react-router-dom";
 import Rating from "./Rating";
 import axios from "axios";
-import { useContext } from "react";
 import { Store } from "../Store";
+
+// Create an Axios instance with a specific base URL
+const api = axios.create({
+  baseURL: "https://supermart-migs.onrender.com",
+});
 
 function Product(props) {
   const { product } = props;
@@ -17,7 +22,7 @@ function Product(props) {
   const addToCartHandler = async (item) => {
     const existItem = cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    const { data } = await axios.get(`/api/products/${item._id}`);
+    const { data } = await api.get(`/api/products/${item._id}`);
     if (data.countInStock < quantity) {
       window.alert("Sorry. Product is out of stock");
       return;
@@ -50,4 +55,5 @@ function Product(props) {
     </Card>
   );
 }
+
 export default Product;
